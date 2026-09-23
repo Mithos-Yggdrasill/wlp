@@ -1,0 +1,13 @@
+{
+  "name": "Vinothèque – Wijnproefboek",
+  "short_name": "Vinothèque",
+  "description": "Persoonlijk digitaal wijnproefboek",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f6f1eb",
+  "theme_color": "#501832",
+  "orientation": "portrait",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}

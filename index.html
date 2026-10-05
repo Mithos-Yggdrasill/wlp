@@ -4,12 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Vinothèque – Wijnproefboek</title>
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#501832">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Vinothèque">
-<link rel="apple-touch-icon" href="icon.svg">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f6f1eb;color:#292329;font-family:Arial,sans-serif}
 header{background:#501832;color:#fff;padding:16px 20px;position:sticky;top:0;z-index:5}
@@ -30,6 +24,8 @@ input,select,textarea{width:100%;padding:10px;border:1px solid #d9cec7;border-ra
 .stars{font-size:22px;color:#c9a45c}.stars button{padding:0;background:none;color:#d8cec8;font-size:25px}.stars button.active{color:#c9a45c}
 .notice{font-size:12px;color:#776d72}
 @media(max-width:750px){.grid,.two,.list{grid-template-columns:1fr}.hero h2{font-size:28px}}
+
+#printArea{display:none}.fiche-page{width:210mm;min-height:297mm;padding:12mm;background:#fff;font-family:Arial,sans-serif;color:#222;page-break-after:always}.fiche-page h1{text-align:center;font-size:18px;margin:0 0 8mm}.headbox{border:1px solid #222;padding:6mm;display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px;margin-bottom:6mm}.fiche-page section{border:1px solid #222;margin-bottom:6mm;display:grid;grid-template-columns:34mm 1fr;min-height:55mm}.round{border-right:1px solid #222;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:16px}.body{padding:5mm;font-size:9px;line-height:1.55}.body p{margin:0 0 5px}.body h2{font-size:12px;margin:3px 0 4px}.other,.aromabox{border:1px solid #aaa;min-height:15mm;padding:3mm;margin:4mm 0}.bigstar{font-size:18px}.printfoot{text-align:center;font-size:8px;color:#777}@media print{#printArea{display:block!important}body{background:#fff}header,#dashboard,#editor{display:none!important}.fiche-page{margin:0;box-shadow:none}}
 </style>
 </head>
 <body>
@@ -69,7 +65,8 @@ input,select,textarea{width:100%;padding:10px;border:1px solid #d9cec7;border-ra
 <label><span>Intensiteit</span><select id="visualIntensity"><option>laag</option><option>gemiddeld</option><option>hoog</option></select></label>
 <label><span>Helderheid</span><select id="clarity"><option>helder</option><option>licht gesluierd</option><option>wazig</option><option>troebel</option></select></label>
 <label><span>Schittering</span><select id="shine"><option>briljant</option><option>helder</option><option>mat</option></select></label>
-<label><span>Kleur & nuance</span><input id="color"></label>
+<label><span>Kleur</span><select id="colorFamily"><option value="">— kies —</option><option>Wit</option><option>Rosé</option><option>Rood</option></select></label>
+<label><span>Nuance</span><select id="colorNuance"><option value="">— kies eerst kleur —</option></select></label>
 <label><span>Andere</span><input id="visualOther"></label>
 </div></div>
 
@@ -80,54 +77,71 @@ input,select,textarea{width:100%;padding:10px;border:1px solid #d9cec7;border-ra
 <label><span>Evolutie</span><select id="evolution"><option>minder intens</option><option>idem</option><option>meer intens</option></select></label>
 <label><span>Aard aroma's</span><select id="aromaNature"><option>primair</option><option>secundair</option><option>tertiair</option></select></label>
 </div>
-<br><label><span>Concrete aroma's</span><textarea id="concreteAromas" placeholder="citroen, appel, perzik, vanille..."></textarea></label>
-<br><label><span>Aromagroepen</span></label><div id="aromas" class="pills"></div>
+<label style="display:block;margin-top:12px"><span>Aromagroepen</span></label><div id="aromas" class="pills"></div>
+<label style="display:block;margin-top:12px"><span>Concrete aroma's</span><textarea id="concreteAromas" placeholder="citroen, appel, perzik, vanille..."></textarea></label>
 </div>
 
-<div class="card"><h2>👅 Gustatief</h2><div class="two grid">
+<div class="card"><h2>👅 Gustatief</h2>
+<div class="sub"><h3>Aanzet</h3><div class="two grid">
 <label><span>Zuiverheid</span><select id="tastePurity"><option>zuiver</option><option>onzuiver</option></select></label>
 <label><span>Intensiteit</span><select id="tasteIntensity"><option>laag</option><option>gemiddeld</option><option>hoog</option></select></label>
-<label><span>Eerste indruk</span><input id="firstImpression"></label>
-<label><span>Retro-olfactie</span><input id="retro"></label>
-<label><span>Zuren</span><select id="acidityAmount"><option>laag</option><option>gemiddeld</option><option>hoog</option></select></label>
-<label><span>Rol zuren</span><select id="acidityRole"><option>vlak</option><option>ondersteunend</option><option>krokant</option><option>op de voorgrond</option><option>dominant</option></select></label>
+<label class="full"><span>Eerste indruk</span><input id="firstImpression"></label>
+<label class="full"><span>Retro-olfactie</span><input id="retro" placeholder="bevestigend - aanvullend ..."></label>
+</div></div>
+<div class="sub"><h3>Middenmond</h3><div class="two grid">
+<label><span>Zurengehalte</span><select id="acidityAmount"><option>laag</option><option>gemiddeld</option><option>hoog</option></select></label>
+<label><span>Rol zuren</span><select id="acidityRole"><option>vlak</option><option>op de achtergrond</option><option>ondersteunend</option><option>krokant</option><option>op de voorgrond</option><option>dominant</option></select></label>
 <label><span>Zoetheid</span><select id="sweetness"><option>beendroog</option><option>droog</option><option>lichtzoet</option><option>zoet</option></select></label>
+<label><span>Tannine — hoeveelheid</span><select id="tanninAmount"><option>laag</option><option>gemiddeld</option><option>hoog</option></select></label>
+<label><span>Tannine — aard</span><select id="tanninNature"><option>onrijp</option><option>groen</option><option>korrelig</option><option>geïntegreerd</option><option>rijp</option><option>versmolten</option></select></label>
 <label><span>Alcohol</span><select id="alcohol"><option>laag</option><option>gemiddeld</option><option>hoog</option></select></label>
-<label><span>Tannine</span><select id="tanninAmount"><option>laag</option><option>gemiddeld</option><option>hoog</option></select></label>
-<label><span>Aard tannine</span><select id="tanninNature"><option>onrijp</option><option>groen</option><option>korrelig</option><option>geïntegreerd</option><option>rijp</option><option>versmolten</option></select></label>
+<label class="full"><span>Evenwicht</span><input id="balanceText" placeholder="bv. zuren / tannine / alcohol / zoetheid"></label>
 </div></div>
+<div class="sub"><h3>Afdronk</h3><div class="two grid">
+<label><span>PAI — welk aroma?</span><input id="paiAroma"></label><label><span>PAI — hoe lang?</span><select id="paiLength"><option>kort</option><option>middelmatig</option><option>lang</option><option>zeer lang</option></select></label>
+<label><span>PG — structurele smaak?</span><input id="pgTaste"></label><label><span>PG — hoe lang?</span><select id="pgLength"><option>kort</option><option>middelmatig</option><option>lang</option><option>zeer lang</option></select></label>
+</div></div></div>
 
-<div class="card"><h2>🌿 Afdronk</h2><div class="two grid">
-<label><span>PAI — aroma</span><input id="paiAroma"></label><label><span>PAI — duur</span><select id="paiLength"><option>kort</option><option>middelmatig</option><option>lang</option><option>zeer lang</option></select></label>
-<label><span>PG — structurele smaak</span><input id="pgTaste"></label><label><span>PG — duur</span><select id="pgLength"><option>kort</option><option>middelmatig</option><option>lang</option><option>zeer lang</option></select></label>
-</div></div>
 
 <div class="card"><h2>🏁 Conclusie</h2><div class="grid">
 <label><span>Wijntype</span><select id="conclusionType"><option>stille wijn</option><option>mousserende wijn</option></select></label>
 <label><span>Kleurtype</span><select id="colorType"><option>witte wijn</option><option>oranje wijn</option><option>rosé wijn</option><option>rode wijn</option></select></label>
-<label><span>Wijnstijl</span><input id="wineStyle"></label>
+<label><span>Droogte</span><select id="dryness"><option>beendroog</option><option>droog</option><option>lichtzoet</option><option>zoet</option></select></label>
+<label><span>Wijnstijl</span><input id="wineStyle" placeholder="wit: fris / vol / complex"></label>
+<label class="full"><span>Persoonlijke waardering — kies 1 tot 5 sterren</span><div id="stars" class="stars"></div></label>
+<label><span>Bilan degustatie</span><select id="tastingBalance"><option>lineair</option><option>homogeen</option><option>evoluerend</option></select></label>
 <label><span>Klimaat</span><select id="climate"><option>cool climate</option><option>warm climate</option></select></label>
 <label><span>Bewaarpotentieel</span><select id="ageing"><option>te jong</option><option>op dronk, maar kan nog rijpen</option><option>nu drinken, niet laten liggen</option><option>te oud</option></select></label>
-<label><span>Temperatuur °C</span><input id="temperature" type="number" step=".5"></label>
+<label><span>Karafere​n</span><select id="carafe"><option>ja</option><option>neen</option></select></label>
+<label><span>Decanteren</span><select id="decant"><option>ja</option><option>neen</option></select></label>
+<label><span>Temperatuur</span><select id="temperature">
+<option value="">— kies temperatuur —</option>
+<option>8 °C</option>
+<option>10 °C</option>
+<option>12 °C</option>
+<option>14 °C</option>
+<option>16 °C</option>
+<option>18 °C</option>
+</select></label>
 <label><span>Vinificatie</span><select id="vinification"><option>reductief</option><option>oxidatief</option></select></label>
-<label><span>Houtrijping</span><select id="wood"><option>neen</option><option>ja</option></select></label>
+<label><span>Houtrijping</span><select id="wood"><option>ja</option><option>neen</option></select></label>
 <label class="full"><span>Wijn & gerechten</span><textarea id="pairing"></textarea></label>
 <label class="full"><span>Origine</span><input id="origin"></label>
-<label class="full"><span>Persoonlijke waardering</span><div id="stars" class="stars"></div></label>
 <label class="full"><span>Notities</span><textarea id="rating"></textarea></label>
 </div>
-<div class="toolbar" style="justify-content:flex-end;margin-top:18px"><button type="button" class="secondary" id="cancel">Annuleren</button><button class="primary" type="submit">✓ Bewaar degustatie</button></div>
+<div class="toolbar" style="justify-content:flex-end;margin-top:18px"><button type="button" class="secondary" id="cancel">Annuleren</button><button type="button" class="secondary" id="pdfBtn">📄 Genereer PDF</button><button class="primary" type="submit">✓ Bewaar degustatie</button></div>
 </div>
 </form>
 </section>
 </main>
+<div id="printArea"></div>
 
 <script>
 (function(){
 'use strict';
 var KEY='vinotheque-simple-v3';
 var aromaNames=['Floraal','Citrusfruit','Steenfruit','Rood fruit','Zwart fruit','Exotisch fruit','Gestoofd fruit','Gedroogd fruit','Vegetaal','Houtig','Kruidig','Mineraal','Gistachtig','Lactisch','Rokerig','Gebrand','Dierlijk','Chemisch','Confiserie'];
-var fieldIds=['name','year','tastedAt','price','boughtAt','group','visualType','visualIntensity','clarity','shine','color','visualOther','olfPurity','olfIntensity','evolution','aromaNature','concreteAromas','tastePurity','tasteIntensity','firstImpression','retro','acidityAmount','acidityRole','sweetness','alcohol','tanninAmount','tanninNature','paiAroma','paiLength','pgTaste','pgLength','conclusionType','colorType','wineStyle','climate','ageing','temperature','vinification','wood','pairing','origin','rating'];
+var fieldIds=['name','year','tastedAt','price','boughtAt','group','visualType','visualIntensity','clarity','shine','colorFamily','colorNuance','visualOther','olfPurity','olfIntensity','evolution','aromaNature','concreteAromas','tastePurity','tasteIntensity','firstImpression','retro','acidityAmount','acidityRole','sweetness','alcohol','tanninAmount','tanninNature','balanceText','paiAroma','paiLength','pgTaste','pgLength','conclusionType','colorType','dryness','wineStyle','tastingBalance','climate','ageing','carafe','decant','temperature','vinification','wood','pairing','origin','rating'];
 var score=0;
 
 function el(id){return document.getElementById(id);}
@@ -136,21 +150,24 @@ function saveWines(a){try{localStorage.setItem(KEY,JSON.stringify(a));}catch(e){
 function now(){var d=new Date();function p(n){return String(n).padStart(2,'0');}return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'T'+p(d.getHours())+':'+p(d.getMinutes());}
 function openEditor(){document.body.className='editing';el('tastedAt').value=now();window.scrollTo(0,0);}
 function closeEditor(){document.body.className='';window.scrollTo(0,0);}
-function clearForm(){el('wineForm').reset();el('wineForm').dataset.editing='';score=0;paintStars();document.querySelectorAll('#aromas input').forEach(function(x){x.checked=false;});openEditor();}
+function clearForm(){el('wineForm').reset();el('wineForm').dataset.editing='';score=0;paintStars();document.querySelectorAll('#aromas input').forEach(function(x){x.checked=false;});el('colorNuance').innerHTML='<option value="">— kies eerst kleur —</option>';openEditor();}
 function paintStars(){var bs=el('stars').querySelectorAll('button');bs.forEach(function(b){b.className=(Number(b.dataset.n)<=score?'active':'');});}
 function collect(){var o={};fieldIds.forEach(function(id){o[id]=el(id).value;});o.id=el('wineForm').dataset.editing||String(Date.now());o.score=score;o.aromas=[];document.querySelectorAll('#aromas input:checked').forEach(function(x){o.aromas.push(x.value);});return o;}
-function fill(o){fieldIds.forEach(function(id){if(o[id]!==undefined)el(id).value=o[id];});score=o.score||0;paintStars();document.querySelectorAll('#aromas input').forEach(function(x){x.checked=(o.aromas||[]).indexOf(x.value)>=0;});el('wineForm').dataset.editing=o.id;openEditor();}
+function fill(o){fieldIds.forEach(function(id){if(o[id]!==undefined)el(id).value=o[id];});score=Math.min(5,Number(o.score)||0);paintStars();document.querySelectorAll('#aromas input').forEach(function(x){x.checked=(o.aromas||[]).indexOf(x.value)>=0;});el('wineForm').dataset.editing=o.id;openEditor();}
 function render(){
 var q=(el('search').value||'').toLowerCase();var a=getWines().filter(function(o){return JSON.stringify(o).toLowerCase().indexOf(q)>=0;}).sort(function(x,y){return (y.tastedAt||'').localeCompare(x.tastedAt||'');});
 if(!a.length){el('list').innerHTML='<div class="notice">Nog geen degustaties. Tijd om een fles open te trekken. 🍷</div>';return;}
 el('list').innerHTML=a.map(function(o){
-var stars='★★★★★'.slice(0,o.score||0)+'☆☆☆☆☆'.slice(0,5-(o.score||0));
+var stars='★'.repeat(Math.max(0,Math.min(5,Number(o.score)||0)))+'☆'.repeat(5-Math.max(0,Math.min(5,Number(o.score)||0)));
 return '<div class="item"><div><h3>'+safe(o.name||'Naamloze wijn')+' <small>'+safe(o.year||'')+'</small></h3><div class="meta">'+safe(o.tastedAt||'')+(o.boughtAt?' · '+safe(o.boughtAt):'')+(o.price?' · € '+safe(o.price):'')+'</div><div class="stars" style="font-size:16px">'+stars+'</div></div><div class="actions"><button class="secondary" data-edit="'+safe(o.id)+'" type="button">Bewerk</button><button class="secondary" data-delete="'+safe(o.id)+'" type="button">×</button></div></div>';
 }).join('');
 }
 function safe(s){return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
 aromaNames.forEach(function(a){var l=document.createElement('label');l.className='pill';l.innerHTML='<input type="checkbox" value="'+a+'"><span>'+a+'</span>';el('aromas').appendChild(l);});
+var colorOptions={Wit:['bleek(wit)geel','groengeel','citroengeel','goudgeel','amber'],Rosé:['lichtroze (grijs)','zalmroze','koperroze','lichtrood','bruine tinten'],Rood:['paarse schijn','kersenrood','robijnrood','granaatrood','bruine tinten']};
+function updateNuances(){var f=el('colorFamily'),n=el('colorNuance'),old=n.value;n.innerHTML='<option value="">— kies nuance —</option>';(colorOptions[f.value]||[]).forEach(function(v){var o=document.createElement('option');o.value=v;o.textContent=v;n.appendChild(o)});if((colorOptions[f.value]||[]).indexOf(old)>=0)n.value=old;}
+el('colorFamily').addEventListener('change',updateNuances);
 for(var i=1;i<=5;i++){var b=document.createElement('button');b.type='button';b.dataset.n=i;b.textContent='★';b.addEventListener('click',function(){score=Number(this.dataset.n);paintStars();});el('stars').appendChild(b);}
 
 el('newWine').addEventListener('click',clearForm);
@@ -168,13 +185,16 @@ el('wineForm').addEventListener('submit',function(e){
 e.preventDefault();var o=collect(),a=getWines(),idx=a.findIndex(function(x){return x.id===o.id;});
 if(idx<0)a.push(o);else a[idx]=o;saveWines(a);closeEditor();alert('Degustatie opgeslagen 🍷');
 });
-render();
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function () {
-    navigator.serviceWorker.register('sw.js').catch(function(){});
-  });
+function buildPrintFiche(){
+ var o=collect(), A=function(v){return safe(v||'—')}, chk=function(v){return v?'☒':'☐'};
+ var groups=(o.aromas||[]).join(' · ')||'—';
+ var stars='★'.repeat(Math.max(0,Math.min(5,Number(o.score)||0)))+'☆'.repeat(5-Math.max(0,Math.min(5,Number(o.score)||0)));
+ var page1='<div class="fiche-page"><h1>Degustatiefiche WLP</h1><div class="headbox"><span><b>Naam:</b> '+A(o.name)+'</span><span><b>Groep:</b> '+A(o.group)+'</span><span><b>Jaargang:</b> '+A(o.year)+'</span><span><b>Datum:</b> '+A(o.tastedAt)+'</span><span><b>Prijs:</b> '+(o.price?'€ '+A(o.price):'—')+'</span><span><b>Waar gekocht:</b> '+A(o.boughtAt)+'</span></div><section><div class="round">Visueel</div><div class="body"><p><b>Wijntype:</b> '+A(o.visualType)+'　 <b>Intensiteit:</b> '+A(o.visualIntensity)+'</p><p><b>Helderheid:</b> '+A(o.clarity)+'　 <b>Schittering:</b> '+A(o.shine)+'</p><p><b>Kleur & nuance:</b> '+A(o.colorFamily)+' — '+A(o.colorNuance)+'</p><div class="other"><b>Andere:</b> '+A(o.visualOther)+'</div></div></section><section><div class="round">Olfactief</div><div class="body"><p><b>Zuiverheid:</b> '+A(o.olfPurity)+'　 <b>Intensiteit:</b> '+A(o.olfIntensity)+'</p><p><b>Evolutie:</b> '+A(o.evolution)+'</p><p><b>Aromagroepen:</b> '+A(groups)+'</p><div class="aromabox"><b>Concrete aroma’s:</b><br>'+A(o.concreteAromas)+'</div><p><b>Aard van aroma’s:</b> '+A(o.aromaNature)+'</p></div></section></div>';
+ var page2='<div class="fiche-page"><section><div class="round">Gustatief</div><div class="body"><h2>AANZET</h2><p><b>Zuiverheid:</b> '+A(o.tastePurity)+'　 <b>Intensiteit:</b> '+A(o.tasteIntensity)+'</p><p><b>Eerste indruk:</b> '+A(o.firstImpression)+'</p><p><b>Retro-olfactie:</b> '+A(o.retro)+'</p><h2>MIDDENMOND</h2><p><b>Zuren:</b> '+A(o.acidityAmount)+' — '+A(o.acidityRole)+'</p><p><b>Zoetheid:</b> '+A(o.sweetness)+'</p><p><b>Tannine:</b> '+A(o.tanninAmount)+' — '+A(o.tanninNature)+'</p><p><b>Alcohol:</b> '+A(o.alcohol)+'</p><p><b>Evenwicht:</b> '+A(o.balanceText)+'</p><h2>AFDRONK</h2><p><b>PAI:</b> '+A(o.paiAroma)+' — '+A(o.paiLength)+'</p><p><b>PG:</b> '+A(o.pgTaste)+' — '+A(o.pgLength)+'</p></div></section><section><div class="round">Conclusie</div><div class="body"><p><b>Wijntype:</b> '+A(o.conclusionType)+'　 <b>Kleur:</b> '+A(o.colorType)+'　 <b>Droogte:</b> '+A(o.dryness)+'</p><p><b>Wijnstijl:</b> '+A(o.wineStyle)+'</p><p><b>Persoonlijke waardering:</b> <span class="bigstar">'+stars+'</span></p><p><b>Bilan:</b> '+A(o.tastingBalance)+'　 <b>Klimaat:</b> '+A(o.climate)+'</p><p><b>Bewaarpotentieel:</b> '+A(o.ageing)+'</p><p><b>Service:</b> karafere​n '+chk(o.carafe==='ja')+'　 decanteren '+chk(o.decant==='ja')+'　 <b>Temperatuur:</b> '+(o.temperature?A(o.temperature)+' °C':'—')+'</p><p><b>Vinificatie:</b> '+A(o.vinification)+'　 <b>Houtrijping:</b> '+A(o.wood)+'</p><div class="other"><b>Wijn en gerechten:</b><br>'+A(o.pairing)+'</div><div class="other"><b>Origine:</b> '+A(o.origin)+'</div><div class="other"><b>Notities:</b><br>'+A(o.rating)+'</div></div></section><div class="printfoot">Vinothèque — ingevulde digitale versie van de degustatiefiche</div></div>';
+ el('printArea').innerHTML=page1+page2;
 }
+el('pdfBtn').addEventListener('click',function(){buildPrintFiche();window.print();});
+render();
 })();
 </script>
 </body>
